@@ -7,5 +7,5 @@ export const user = drizzle.pgTable("user", {
     firstName: drizzle.varchar().notNull(),
     lastName: drizzle.varchar().notNull(),
     phoneNumber: drizzle.varchar().notNull(),
-    role: drizzle.varchar().notNull().default("User")
+    role: drizzle.varchar().notNull().default("user")
 });
