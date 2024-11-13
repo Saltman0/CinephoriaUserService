@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"firstName" varchar NOT NULL,
 	"lastName" varchar NOT NULL,
 	"phoneNumber" varchar NOT NULL,
-	"role" varchar DEFAULT 'User' NOT NULL
+	"role" varchar DEFAULT 'user' NOT NULL
 );
