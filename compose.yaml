@@ -1,0 +1,60 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker Compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+# Here the instructions define your application as a service called "server".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+services:
+  user_server:
+    container_name: user_server
+    build:
+      context: .
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      IS_VERBOSE_ENABLED: ${IS_VERBOSE_ENABLED}
+      IS_SSL_ENABLED: ${IS_SSL_ENABLED}
+    networks:
+      - cinephoria_user_network
+    ports:
+      - "3004:3000"
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres_user
+
+  postgres_user:
+    container_name: postgres_user
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST_AUTH_METHOD: ${POSTGRES_HOST_AUTH_METHOD}
+      POSTGRES_INITDB_ARGS: ${POSTGRES_INITDB_ARGS}
+    networks:
+      - cinephoria_user_network
+    ports:
+      - "5436:5432"
+    restart: unless-stopped
+    volumes:
+      - postgres_user_data:/var/lib/postgresql/data
+
+networks:
+  cinephoria_user_network:
+    name: cinephoria_user_network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.23.0.0/16
+          gateway: 172.23.0.1
+
+volumes:
+  postgres_user_data:
