@@ -3,31 +3,11 @@ import { database } from "../config/database";
 import { eq } from "drizzle-orm/sql/expressions/conditions";
 import { user } from "../schema/user";
 
-export async function findUsers(email: string|null, password: string|null, firstName: string|null, lastName: string|null, phoneNumber: string|null, role: string|null) {
+export async function findUsers(role: string|null) {
     let findUsersQuery = 'SELECT * FROM "user"';
 
-    if (email !== null) {
-        findUsersQuery += ` WHERE "user"."email" = ${email}`;
-    }
-
-    if (password !== null) {
-        findUsersQuery += ` WHERE "user"."password" = ${password}`;
-    }
-
-    if (firstName !== null) {
-        findUsersQuery += ` WHERE "user"."firstName" = ${firstName}`;
-    }
-
-    if (lastName !== null) {
-        findUsersQuery += ` WHERE "user"."lastName" = ${lastName}`;
-    }
-
-    if (phoneNumber !== null) {
-        findUsersQuery += ` WHERE "user"."phoneNumber" = ${phoneNumber}`;
-    }
-
     if (role !== null) {
-        findUsersQuery += ` WHERE "user"."role" = ${role}`;
+        findUsersQuery += ` WHERE "user"."role" = '${role}'`;
     }
 
     findUsersQuery += ' ORDER BY "user"."id" ASC;';

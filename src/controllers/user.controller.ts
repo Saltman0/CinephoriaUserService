@@ -4,12 +4,7 @@ import * as userRepository from "../repository/user.repository";
 export async function getUsers(req: Request, res: Response) {
     try {
         const users = await userRepository.findUsers(
-            req.body.email ?? null,
-            req.body.password ?? null,
-            req.body.firstName ?? null,
-            req.body.lastName ?? null,
-            req.body.phoneNumber ?? null,
-            req.body.role ?? null
+            req.query.role as string ?? null
         );
 
         if (users !== null) {
