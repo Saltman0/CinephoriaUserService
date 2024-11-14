@@ -1,6 +1,7 @@
 import express, { Express } from "express";
 import cors from "cors";
 import pino from "pino";
+import userRoutes from "./routes/user.routes";
 
 export const port: number = 3000;
 
@@ -17,3 +18,5 @@ export const logger = pino({
 
 app.use(cors());
 app.use(express.json());
+
+app.use(userRoutes);
