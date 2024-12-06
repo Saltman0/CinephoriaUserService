@@ -1,3 +1,7 @@
-docker_build('saltman0/nodejs-api:dev')
+docker_build('saltman0/nodejs-user:dev', '.', entrypoint=".")
 
-k8s_resource(workload='user-nodejs-deployment', port_forwards=3001, labels=["backend"])
+k8s_resource(
+    workload='user-nodejs-deployment',
+    port_forwards=3004,
+    labels=["backend"]
+)
