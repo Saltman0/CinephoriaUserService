@@ -33,4 +33,4 @@ USER node
 COPY . .
 
 # Run the application with the entrypoint.
-CMD ["pnpm", "run", "dev"]
+CMD ["npx", "tsx", "watch", "server.ts"]
