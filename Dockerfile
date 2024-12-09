@@ -11,7 +11,11 @@ ARG PNPM_VERSION=9.12.1
 FROM node:${NODE_VERSION}-alpine
 
 # Set working directory
-WORKDIR /app
+WORKDIR /usr/src/app
+
+# Copy only files required to install
+# dependencies (better layer caching)
+COPY package*.json ./
 
 # Install pnpm globally, using a cache for npm
 RUN --mount=type=cache,target=/root/.npm \
@@ -30,7 +34,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 USER node
 
 # Copy the rest of the source files into the image.
-COPY . .
+COPY --chown=node:node ./src/ .
 
 # Run the application with the entrypoint.
 CMD ["npx", "tsx", "watch", "server.ts"]
