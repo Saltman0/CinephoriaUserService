@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import * as userRepository from "../repository/user.repository";
 import jwt from "jsonwebtoken";
 
-export async function login(req: Request, res: Response) {
+export async function loginUser(req: Request, res: Response) {
     try {
         const user = await userRepository.findUserByEmailAndPassword(
             req.body.email,
