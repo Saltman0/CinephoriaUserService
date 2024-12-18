@@ -1,6 +1,6 @@
 import * as userFactory from "../factory/user.factory";
 import { database } from "../config/database";
-import { eq } from "drizzle-orm/sql/expressions/conditions";
+import {and, eq} from "drizzle-orm/sql/expressions/conditions";
 import { user } from "../schema/user";
 
 export async function findUsers(role: string|null) {
@@ -32,6 +32,25 @@ export async function findUserById(id: number) {
             .from(user)
             .where(eq(user.id, id))
             .prepare("findUserById")
+            .execute();
+
+        if (result.length === 0) {
+            return null;
+        }
+
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function findUserByEmailAndPassword(email: string, password: string) {
+    try {
+        const result = await database
+            .select()
+            .from(user)
+            .where(and(eq(user.email, email), eq(user.password, password)))
+            .prepare("findUserByEmailAndPassword")
             .execute();
 
         if (result.length === 0) {
