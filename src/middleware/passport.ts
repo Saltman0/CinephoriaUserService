@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as JwtStrategy, ExtractJwt, StrategyOptions } from "passport-jwt";
-import * as userRepository from "../repository/user.repository"
+import * as userRepository from "../repository/user.repository";
 
 const options: StrategyOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
