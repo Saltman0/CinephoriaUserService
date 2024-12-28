@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import cors from "cors";
 import pino from "pino";
 import userRoutes from "./routes/user.routes";
+import passport from "passport";
 
 export const port: number = parseInt(process.env.PORT as string) || 3000;
 
@@ -18,5 +19,5 @@ export const logger = pino({
 
 app.use(cors());
 app.use(express.json());
-
+app.use(passport.initialize());
 app.use(userRoutes);

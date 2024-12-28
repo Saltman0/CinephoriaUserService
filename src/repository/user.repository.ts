@@ -44,6 +44,25 @@ export async function findUserById(id: number) {
     }
 }
 
+export async function findUserByEmail(email: string) {
+    try {
+        const result = await database
+            .select()
+            .from(user)
+            .where(eq(user.email, email))
+            .prepare("findUserByEmail")
+            .execute();
+
+        if (result.length === 0) {
+            return null;
+        }
+
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
 export async function findUserByEmailAndPassword(email: string, password: string) {
     try {
         const result = await database
