@@ -18,7 +18,7 @@ export async function loginUser(req: Request, res: Response) {
 
             // Define a payload with the information you want to include in the token
             const payload = {
-                email: user[0].email,
+                id: user[0].id,
                 iss: process.env.JWT_KEY
             };
 
