@@ -4,14 +4,18 @@ import jwt from "jsonwebtoken";
 
 export async function loginUser(req: Request, res: Response) {
     try {
-        const user = await userRepository.findUserByEmailAndPassword(
-            req.body.email,
-            req.body.password
-        );
+        const email: string = req.body.email;
+        const password: string = req.body.password;
+
+        const user = await userRepository.findUserByEmail(email);
 
         if (user === null) {
-            res.status(401).json({error : `Authentication failed : user ${req.body.email} not found.`});
+            res.status(401).json({error: `Authentication failed : incorrect email or password`});
         } else {
+            if (password !== user[0].password) {
+                res.status(401).json({error: `Authentication failed : incorrect email or password`});
+            }
+
             // Define a payload with the information you want to include in the token
             const payload = {
                 email: user[0].email,
