@@ -15,11 +15,11 @@ export async function loginUser(req: Request, res: Response) {
             // Define a payload with the information you want to include in the token
             const payload = {
                 email: user[0].email,
-                iss: "1*!uaNzKqrhZadJEcdpVGBH&E2%@g2usRxQ14h13dexDcjh8gMG3yyQ&aM&NpudW"
+                iss: process.env.JWT_KEY
             };
 
-            const token = jwt.sign(payload, "@Kv^n3^^ncBZ78$43GM59cfP77Bee*JQpnfRzgbEB2&w1C&3#54#kP5@0dR0DbuR", {
-                expiresIn: "30d"
+            const token: string = jwt.sign(payload, process.env.JWT_SECRET as string, {
+                expiresIn: "1h"
             });
 
             res.status(200).json(token);
