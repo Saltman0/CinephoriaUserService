@@ -1,6 +1,6 @@
 import * as amqp from "amqplib";
 
-const url: string = "amqp://guest:guest@10.96.178.161";
+const url: string = "amqp://"+process.env.RABBITMQ_USER+":"+process.env.RABBITMQ_PASSWORD+"@"+process.env.RABBITMQ_IP;
 
 export async function publishMessage(exchange: string, message: string) {
     try {
