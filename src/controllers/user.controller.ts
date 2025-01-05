@@ -1,25 +1,23 @@
 import { Request, Response } from "express";
 import * as userRepository from "../repository/user.repository";
 import jwt from "jsonwebtoken";
+import { publishMessage } from "../rabbitmq";
 
 export async function loginUser(req: Request, res: Response) {
     try {
-        const email: string = req.body.email;
-        const password: string = req.body.password;
-
-        const user = await userRepository.findUserByEmail(email);
+        const user = await userRepository.findUserByEmail(req.body.email);
 
         if (user === null) {
             res.status(401).json({error: `Authentication failed : incorrect email or password`});
         } else {
-            if (password !== user[0].password) {
+            if (req.body.password !== user.password) {
                 res.status(401).json({error: `Authentication failed : incorrect email or password`});
             }
 
             // Define a payload with the information you want to include in the token
             const payload = {
-                id: user[0].id,
-                role: user[0].role,
+                id: user.id,
+                role: user.role,
                 iss: process.env.JWT_KEY
             };
 
@@ -45,7 +43,7 @@ export async function getUsers(req: Request, res: Response) {
         if (users !== null) {
             res.status(200).json(users);
         } else {
-            res.status(404).json({error : `Users not found.`});
+            res.status(404).json({ message : `Users not found.` });
         }
     } catch (error) {
         if (error instanceof Error) {
@@ -63,7 +61,7 @@ export async function getUserById(req: Request, res: Response) {
         if (user !== null) {
             res.status(200).json(user);
         } else {
-            res.status(404).json({error : `User ${req.params.id} not found.`});
+            res.status(404).json({ message : `User ${req.params.id} not found.` });
         }
     } catch (error) {
         if (error instanceof Error) {
@@ -83,6 +81,8 @@ export async function createUser(req: Request, res: Response) {
             req.body.role
         );
 
+        await publishMessage("user", JSON.stringify({ type: "user", event: "create", user: userToCreate }));
+
         res.status(201).json(userToCreate);
     } catch (error) {
         if (error instanceof Error) {
@@ -93,7 +93,7 @@ export async function createUser(req: Request, res: Response) {
 
 export async function updateUser(req: Request, res: Response) {
     try {
-        await userRepository.updateUser(
+        const userToUpdate = await userRepository.updateUser(
             parseInt(req.params.id),
             req.body.email,
             req.body.password,
@@ -103,7 +103,9 @@ export async function updateUser(req: Request, res: Response) {
             req.body.role
         );
 
-        res.status(200).json({message: `User updated successfully.`});
+        await publishMessage("user", JSON.stringify({ type: "user", event: "update", user: userToUpdate }));
+
+        res.status(200).json(userToUpdate);
     } catch (error) {
         if (error instanceof Error) {
             res.status(500).json({ message: error.message });
@@ -113,9 +115,13 @@ export async function updateUser(req: Request, res: Response) {
 
 export async function deleteUser(req: Request, res: Response) {
     try {
-        await userRepository.deleteUser(parseInt(req.params.id));
+        const userToDelete = await userRepository.deleteUser(
+            parseInt(req.params.id)
+        );
 
-        res.status(200).json({message: `User deleted successfully.`});
+        await publishMessage("user", JSON.stringify({ type: "user", event: "delete", user: userToDelete }));
+
+        res.status(200).json({ message: `User deleted successfully.` });
     } catch (error) {
         if (error instanceof Error) {
             res.status(500).json({ message: error.message });
