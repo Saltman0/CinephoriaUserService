@@ -30,15 +30,13 @@ export async function findUserById(id: number) {
         const result = await database
             .select()
             .from(user)
-            .where(eq(user.id, id))
-            .prepare("findUserById")
-            .execute();
+            .where(eq(user.id, id));
 
         if (result.length === 0) {
             return null;
         }
 
-        return result;
+        return result[0];
     } catch (error) {
         throw error;
     }
@@ -49,15 +47,13 @@ export async function findUserByEmail(email: string) {
         const result = await database
             .select()
             .from(user)
-            .where(eq(user.email, email))
-            .prepare("findUserByEmail")
-            .execute();
+            .where(eq(user.email, email));
 
         if (result.length === 0) {
             return null;
         }
 
-        return result;
+        return result[0];
     } catch (error) {
         throw error;
     }
@@ -76,27 +72,27 @@ export async function findUserByEmailAndPassword(email: string, password: string
             return null;
         }
 
-        return result;
+        return result[0];
     } catch (error) {
         throw error;
     }
 }
 
 export async function insertUser(email: string, password: string, firstName: string, lastName: string, phoneNumber: string, role: string) {
-    const preparedInsertUser = database
+    const preparedInsertUser = await database
         .insert(user)
         .values(userFactory.createUser(email, password, firstName, lastName, phoneNumber, role))
-        .prepare("insertUser");
+        .returning();
 
     try {
-        await preparedInsertUser.execute();
+        return preparedInsertUser[0];
     } catch (error) {
         throw error;
     }
 }
 
 export async function updateUser(id: number, email: string|null, password: string|null, firstName: string|null, lastName: string|null, phoneNumber: string|null, role: string|null) {
-    const preparedUpdateUser = database
+    const preparedUpdateUser = await database
         .update(user)
         .set({
             email: email ?? undefined,
@@ -107,23 +103,23 @@ export async function updateUser(id: number, email: string|null, password: strin
             role: role ?? undefined
         })
         .where(eq(user.id, id))
-        .prepare("updateUser");
+        .returning();
 
     try {
-        await preparedUpdateUser.execute();
+        return preparedUpdateUser[0];
     } catch (error) {
         throw error;
     }
 }
 
 export async function deleteUser(id: number) {
-    const preparedDeleteUser = database
+    const preparedDeleteUser = await database
         .delete(user)
         .where(eq(user.id, id))
-        .prepare("deleteUser");
+        .returning({ id: user.id });
 
     try {
-        await preparedDeleteUser.execute();
+        return preparedDeleteUser[0];
     } catch (error) {
         throw error;
     }
