@@ -1,4 +1,5 @@
 import * as amqp from "amqplib";
+import { eventEmitter } from "./events/events";
 
 const url: string = "amqp://"+process.env.RABBITMQ_USER+":"+process.env.RABBITMQ_PASSWORD+"@"+process.env.RABBITMQ_IP;
 
@@ -34,7 +35,7 @@ export async function subscribeToMessages(exchange: string) {
         // Consume messages from the queue
         await channel.consume(queue, function(message: amqp.ConsumeMessage|null) {
             if (message !== null) {
-                console.log(JSON.parse(message.content.toString()));
+                eventEmitter.emit("messageReceived", JSON.parse(message.content.toString()));
             }
         }, {
             noAck: true
