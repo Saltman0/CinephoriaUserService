@@ -1,6 +1,6 @@
 import * as userFactory from "../factory/user.factory";
 import { database } from "../config/database";
-import { eq } from "drizzle-orm/sql/expressions/conditions";
+import {and, eq} from "drizzle-orm/sql/expressions/conditions";
 import { user } from "../schema/user";
 
 export async function findUsers(role: string|null) {
@@ -30,35 +30,69 @@ export async function findUserById(id: number) {
         const result = await database
             .select()
             .from(user)
-            .where(eq(user.id, id))
-            .prepare("findUserById")
+            .where(eq(user.id, id));
+
+        if (result.length === 0) {
+            return null;
+        }
+
+        return result[0];
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function findUserByEmail(email: string) {
+    try {
+        const result = await database
+            .select()
+            .from(user)
+            .where(eq(user.email, email));
+
+        if (result.length === 0) {
+            return null;
+        }
+
+        return result[0];
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function findUserByEmailAndPassword(email: string, password: string) {
+    try {
+        const result = await database
+            .select()
+            .from(user)
+            .where(and(eq(user.email, email), eq(user.password, password)))
+            .prepare("findUserByEmailAndPassword")
             .execute();
 
         if (result.length === 0) {
             return null;
         }
 
-        return result;
+        return result[0];
     } catch (error) {
         throw error;
     }
 }
 
 export async function insertUser(email: string, password: string, firstName: string, lastName: string, phoneNumber: string, role: string) {
-    const preparedInsertUser = database
+    const preparedInsertUser = await database
         .insert(user)
         .values(userFactory.createUser(email, password, firstName, lastName, phoneNumber, role))
-        .prepare("insertUser");
+        .returning();
 
     try {
-        await preparedInsertUser.execute();
+        return preparedInsertUser[0];
     } catch (error) {
         throw error;
     }
 }
 
 export async function updateUser(id: number, email: string|null, password: string|null, firstName: string|null, lastName: string|null, phoneNumber: string|null, role: string|null) {
-    const preparedUpdateUser = database
+    const preparedUpdateUser = await database
         .update(user)
         .set({
             email: email ?? undefined,
@@ -69,23 +103,23 @@ export async function updateUser(id: number, email: string|null, password: strin
             role: role ?? undefined
         })
         .where(eq(user.id, id))
-        .prepare("updateUser");
+        .returning();
 
     try {
-        await preparedUpdateUser.execute();
+        return preparedUpdateUser[0];
     } catch (error) {
         throw error;
     }
 }
 
 export async function deleteUser(id: number) {
-    const preparedDeleteUser = database
+    const preparedDeleteUser = await database
         .delete(user)
         .where(eq(user.id, id))
-        .prepare("deleteUser");
+        .returning({ id: user.id });
 
     try {
-        await preparedDeleteUser.execute();
+        return preparedDeleteUser[0];
     } catch (error) {
         throw error;
     }
