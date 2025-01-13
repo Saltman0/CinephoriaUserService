@@ -25,7 +25,17 @@ export async function loginUser(req: Request, res: Response) {
                 expiresIn: "1h"
             });
 
-            res.status(200).json(token);
+            // Verify the JWT token
+            jwt.verify(token, process.env.JWT_SECRET as string, (err, decoded) => {
+                if (err) {
+                    console.log('Token is invalid or expired');
+                    console.error(err);
+                } else {
+                    console.log('Decoded JWT:', decoded);
+                }
+            });
+
+            res.status(200).json({value: token});
         }
     } catch (error) {
         if (error instanceof Error) {
