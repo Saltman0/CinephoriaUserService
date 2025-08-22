@@ -5,11 +5,9 @@ import { user } from "../schema/user";
 
 export async function findUsers(role: string|null) {
     let findUsersQuery = 'SELECT * FROM "user"';
-
     if (role !== null) {
         findUsersQuery += ` WHERE "user"."role" = '${role}'`;
     }
-
     findUsersQuery += ' ORDER BY "user"."id" ASC;';
 
     try {

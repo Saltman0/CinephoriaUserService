@@ -65,7 +65,7 @@ export async function getUsers(req: Request, res: Response) {
 export async function getUserById(req: Request, res: Response) {
     try {
         const user = await userRepository.findUserById(
-            parseInt(req.params.id)
+            parseInt(req.params.userId)
         );
 
         if (user !== null) {
@@ -104,7 +104,7 @@ export async function createUser(req: Request, res: Response) {
 export async function updateUser(req: Request, res: Response) {
     try {
         const userToUpdate = await userRepository.updateUser(
-            parseInt(req.params.id),
+            parseInt(req.params.userId),
             req.body.email,
             req.body.password,
             req.body.firstName,
@@ -126,7 +126,7 @@ export async function updateUser(req: Request, res: Response) {
 export async function deleteUser(req: Request, res: Response) {
     try {
         const userToDelete = await userRepository.deleteUser(
-            parseInt(req.params.id)
+            parseInt(req.params.userId)
         );
 
         await publishMessage("user", JSON.stringify({ type: "user", event: "delete", body: userToDelete }));

@@ -36,5 +36,8 @@ USER node
 # Copy the rest of the source files into the image.
 COPY --chown=node:node ./src/ .
 
+# Expose the default port (change if your server uses a different one)
+EXPOSE 3004
+
 # Run the application with the entrypoint.
 CMD ["npx", "tsx", "server.ts"]

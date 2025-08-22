@@ -1,8 +1,3 @@
--- Cinéphoria user service database
-DROP DATABASE IF EXISTS "cinephoriaUserServiceDatabase";
-CREATE DATABASE "cinephoriaUserServiceDatabase";
--- Cinéphoria user service database
-
 -- User table
 DROP TABLE IF EXISTS "user";
 CREATE TABLE IF NOT EXISTS "user"
