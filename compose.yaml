@@ -21,6 +21,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       IS_VERBOSE_ENABLED: ${IS_VERBOSE_ENABLED}
       IS_SSL_ENABLED: ${IS_SSL_ENABLED}
+      JWT_KEY: ${JWT_KEY}
+      JWT_SECRET: ${JWT_SECRET}
     networks:
       - cinephoria_user_network
     ports:
