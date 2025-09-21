@@ -1,5 +1,5 @@
 {
-  "id": "1920683c-4046-4d92-a307-919184d1e6a5",
+  "id": "740e1903-753b-4f02-8ba1-f0a7ea10bdfc",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -60,7 +60,7 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": true,
-          "default": "'User'"
+          "default": "'user'"
         }
       },
       "indexes": {},
