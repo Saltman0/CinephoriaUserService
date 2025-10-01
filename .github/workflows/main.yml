@@ -1,0 +1,39 @@
+name: Merge into main branch
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  tag:
+    uses: ./.github/workflows/tag.yml
+    permissions:
+      contents: read
+      packages: write
+
+  docker:
+    uses: ./.github/workflows/docker.yml
+    needs: tag
+    with:
+      image: saltman0/cinephoria-user
+      tag: ${{ needs.tag.outputs.package_version }}
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    permissions:
+      contents: read
+      packages: write
+
+  kubernetes:
+    uses: ./.github/workflows/kubernetes.yml
+    needs: docker
+    with:
+      image: ${{ needs.docker.outputs.image }}
+      tag: ${{ needs.docker.outputs.tag }}
+    secrets:
+      K8S_REPO_TOKEN: ${{ secrets.K8S_REPO_TOKEN }}
+    permissions:
+      contents: read
+      packages: write

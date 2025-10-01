@@ -1,0 +1,31 @@
+name: Tag
+
+on:
+  workflow_call:
+    outputs:
+      package_version:
+        description: "The version from package.json"
+        value: ${{ jobs.get-version.outputs.package_version }}
+
+jobs:
+  get-version:
+    runs-on: ubuntu-latest
+    outputs:
+      package_version: ${{ steps.get_version.outputs.version }}
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Read current version from package.json
+        id: get_version
+        run: |
+          VERSION=$(jq -r .version package.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Use version
+        run: echo "The version is ${{ steps.get_version.outputs.version }}"
