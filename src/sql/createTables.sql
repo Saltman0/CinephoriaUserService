@@ -11,3 +11,13 @@ CREATE TABLE IF NOT EXISTS "user"
     "role" VARCHAR NOT NULL DEFAULT 'user'
 );
 -- User table
+
+-- ResetPassword table
+DROP TABLE IF EXISTS "resetPassword";
+CREATE TABLE IF NOT EXISTS "resetPassword"
+(
+    "id" SERIAL PRIMARY KEY,
+    "token" VARCHAR NOT NULL,
+    "expireTime" TIMESTAMP NOT NULL
+);
+-- ResetPassword table
