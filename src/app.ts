@@ -1,8 +1,9 @@
 import express, { Express } from "express";
 import cors from "cors";
 import pino from "pino";
-import userRoutes from "./routes/user.routes";
 import passport from "./middleware/passport";
+import userRoutes from "./routes/user.routes";
+import loginRoutes from "./routes/login.routes";
 
 export const port: number = parseInt(process.env.PORT as string) || 3000;
 
@@ -21,3 +22,4 @@ app.use(cors());
 app.use(express.json());
 app.use(passport.initialize());
 app.use(userRoutes);
+app.use(loginRoutes);
