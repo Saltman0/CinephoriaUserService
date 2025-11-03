@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS "resetPassword"
 (
     "id" SERIAL PRIMARY KEY,
     "token" VARCHAR NOT NULL,
-    "expireTime" TIMESTAMP NOT NULL
+    "expireTime" TIMESTAMP NOT NULL,
+    "userId" INTEGER NOT NULL
 );
 -- ResetPassword table
