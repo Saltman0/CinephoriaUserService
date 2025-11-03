@@ -4,7 +4,6 @@ import passport from "../middleware/passport";
 
 const router: Router = Router();
 
-router.post("/login", userController.loginUser);
 router.get("/user", userController.getUsers);
 router.get("/user/:userId", userController.getUserById);
 router.post("/user", passport.authenticate("jwt", { session: false }), userController.createUser);
