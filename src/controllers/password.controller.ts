@@ -32,7 +32,15 @@ export async function resetPassword(req: Request, res: Response): Promise<void> 
 
         if (resetPassword !== null) {
             if (Date.now() < resetPassword.expireTime.getTime()) {
-                await userRepository.updateUser(resetPassword.userId, null, req.body.password, null, null, null, null)
+                await userRepository.updateUser(
+                    resetPassword.userId,
+                    null,
+                    req.body.password,
+                    null,
+                    null,
+                    null,
+                    null
+                );
                 res.status(200).json({ message: 'Password successfully reset' });
             } else {
                 res.status(400).json({ error: `Expired token` });
