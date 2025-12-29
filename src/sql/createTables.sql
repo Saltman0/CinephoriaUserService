@@ -19,6 +19,6 @@ CREATE TABLE IF NOT EXISTS "resetPassword"
     "id" SERIAL PRIMARY KEY,
     "token" VARCHAR NOT NULL,
     "expireTime" TIMESTAMP NOT NULL,
-    "userId" INTEGER NOT NULL
+    "userId" INTEGER NOT NULL REFERENCES "user"(id) ON DELETE CASCADE
 );
 -- ResetPassword table
