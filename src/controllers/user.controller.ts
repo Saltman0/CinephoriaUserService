@@ -49,8 +49,6 @@ export async function createUser(req: Request, res: Response) {
             req.body.role
         );
 
-        await publishMessage("user", JSON.stringify({ type: "user", event: "create", body: userToCreate }));
-
         res.status(201).json(userToCreate);
     } catch (error) {
         if (error instanceof Error) {
@@ -71,8 +69,6 @@ export async function updateUser(req: Request, res: Response) {
             req.body.role
         );
 
-        await publishMessage("user", JSON.stringify({ type: "user", event: "update", body: userToUpdate }));
-
         res.status(200).json(userToUpdate);
     } catch (error) {
         if (error instanceof Error) {
@@ -87,7 +83,16 @@ export async function deleteUser(req: Request, res: Response) {
             parseInt(req.params.userId)
         );
 
-        await publishMessage("user", JSON.stringify({ type: "user", event: "delete", body: userToDelete }));
+        await publishMessage(
+            "booking",
+            JSON.stringify(
+                {
+                    type: "booking",
+                    event: "deleteByUser",
+                    body: {userId: userToDelete.id}
+                }
+            )
+        );
 
         res.status(200).json({ message: `User deleted successfully.` });
     } catch (error) {
