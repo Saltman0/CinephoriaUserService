@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as userRepository from "../repository/user.repository";
 import { publishMessage } from "../rabbitmq";
+import * as bcrypt from "bcrypt";
 
 export async function getUsers(req: Request, res: Response) {
     try {
@@ -40,9 +41,15 @@ export async function getUserById(req: Request, res: Response) {
 
 export async function createUser(req: Request, res: Response) {
     try {
+        let hashedPassword: string;
+
+        const salt: string = await bcrypt.genSalt(10);
+
+        hashedPassword = await bcrypt.hash(req.body.password, salt);
+
         const userToCreate = await userRepository.insertUser(
             req.body.email,
-            req.body.password,
+            hashedPassword,
             req.body.firstName,
             req.body.lastName,
             req.body.phoneNumber,
@@ -59,10 +66,18 @@ export async function createUser(req: Request, res: Response) {
 
 export async function updateUser(req: Request, res: Response) {
     try {
+        let password: string|null = req.body.password;
+
+        if (password != null) {
+            const salt: string = await bcrypt.genSalt(10);
+
+            password = await bcrypt.hash(password, salt);
+        }
+
         const userToUpdate = await userRepository.updateUser(
             parseInt(req.params.userId),
             req.body.email,
-            req.body.password,
+            password,
             req.body.firstName,
             req.body.lastName,
             req.body.phoneNumber,
